@@ -1,0 +1,11 @@
+Run config
+"--module-path C:\Users\dacs3203\Desktop\JavaFX\javafx-sdk-23.0.2\lib --add-modules javafx.controls,javafx.graphics"
+
+
+Supervisor account in database for app:
+abood
+DACSpass
+
+Clerk account in database for app:
+mo
+DACS@3203pass
