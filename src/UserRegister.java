@@ -1,0 +1,105 @@
+package src;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class UserRegister {
+    private Scene RegisterScene;
+    private TextField usernameField = new TextField();
+    private TextField nameField = new TextField();
+    private TextField emailField = new TextField();
+    private TextField phoneField = new TextField();
+    private ComboBox<String> roleComboBox = new ComboBox<>();  // Changed to ComboBox
+
+    private Stage stage;
+    private String username;
+
+    public UserRegister(Stage primaryStage, String username) {
+        this.stage = primaryStage;
+        this.username = username;
+    }
+
+    public void initializeComponents() {
+        VBox registerLayout = new VBox(10);
+        registerLayout.setPadding(new Insets(10));
+        Button backButton = new Button("Back");
+        Button registerButton = new Button("Register User");
+
+        // Populate the ComboBox with roles
+        roleComboBox.getItems().addAll("Supervisor", "Clerk", "Mechanic");
+        roleComboBox.setValue("Clerk");
+
+        backButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                SuperInterface superInterface = new SuperInterface(stage, username);
+                superInterface.initializeComponents();
+            }
+        });
+        registerButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                register();
+            }
+        });
+
+        registerLayout.getChildren().addAll(
+                new Label("Username:"), usernameField,
+                new Label("Name"), nameField,
+                new Label("Email"), emailField,
+                new Label("Phone"), phoneField,
+                new Label("Role"), roleComboBox,
+                registerButton,
+                new Label("or"), backButton
+        );
+
+        RegisterScene = new Scene(registerLayout, 300, 415);
+        stage.setTitle("User Registration");
+        stage.setScene(RegisterScene);
+        stage.show();
+    }
+
+    private void register() {
+        String userName = usernameField.getText();
+        String name = nameField.getText();
+        String email = emailField.getText();
+        String phone = phoneField.getText();
+        String role = roleComboBox.getValue();
+
+        Connection con = DBUtils.establishConnection();
+        String query = "INSERT INTO `users` (`username`, `name`, `email`, `phone`, `role`) VALUES (?, ?, ?, ?, ?);";
+
+        try {
+            PreparedStatement statement = con.prepareStatement(query);
+            statement.setString(1, userName);
+            statement.setString(2, name);
+            statement.setString(3, email);
+            statement.setString(4, phone);
+            statement.setString(5, role);
+            int rs = statement.executeUpdate();
+
+            DBUtils.logQuery(username, "New user registered", query);
+
+            if (rs==1) {
+                SuperInterface superInterface = new SuperInterface(stage, username);
+                superInterface.initializeComponents();
+            } else {
+                HashUtils.showAlertF("Registration Failed", "Username Unavailable.");
+            }
+            DBUtils.closeConnection(con, statement);
+        } catch (Exception e) {
+            e.printStackTrace();
+            HashUtils.showAlertF("Database Error", "Failed to register.");
+        }
+    }
+
+}
