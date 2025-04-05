@@ -30,5 +30,30 @@ public class DBUtils {
             e.printStackTrace();
         }
     }
+
+    public static void logQuery(String username, String actionType, String query) {
+        try (Connection con = establishConnection()) {
+            String logQuery = "INSERT INTO audit_log (username, action_type, query_text) VALUES (?, ?, ?)";
+            PreparedStatement logStatement = con.prepareStatement(logQuery);
+            logStatement.setString(1, username);
+            logStatement.setString(2, actionType);
+            logStatement.setString(3, query);
+            logStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void logQuery(String username, String actionType) {
+        try (Connection con = establishConnection()) {
+            String logQuery = "INSERT INTO audit_log (username, action_type) VALUES (?, ?)";
+            PreparedStatement logStatement = con.prepareStatement(logQuery);
+            logStatement.setString(1, username);
+            logStatement.setString(2, actionType);
+            logStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
