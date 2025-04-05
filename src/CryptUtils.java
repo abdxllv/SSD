@@ -80,5 +80,10 @@ public class CryptUtils {
         return Pattern.compile(regex).matcher(email).matches();
     }
 
+    public static boolean isValidUsername(String username) {
+        String regex = "^[a-zA-Z0-9_.]{3,32}$";
+        return Pattern.compile(regex).matcher(username).matches();
+    }
+
 
 }

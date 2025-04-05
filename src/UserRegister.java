@@ -74,6 +74,11 @@ public class UserRegister {
         String phone = phoneField.getText().trim();
         String role = roleComboBox.getValue();
 
+        if (!CryptUtils.isValidUsername(userName)) {
+            CryptUtils.showAlertF("Invalid username", "Username can contain only letters, digits, underscores and '.', minimum of 3 characters");
+            return;
+        }
+
         if (!CryptUtils.isValidName(phone)) {
             CryptUtils.showAlertF("Invalid Name", "Name should only contain letters");
             return;
