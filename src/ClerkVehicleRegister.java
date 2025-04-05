@@ -72,6 +72,34 @@ public class ClerkVehicleRegister {
         String customerID = customerIDField.getText();
         String customerPhone = customerPhoneField.getText();
 
+
+        if (!CryptUtils.isValidQatariLicensePlate(licensePlate)) {
+            CryptUtils.showAlertF("Invalid License Plate", "A Qatari number plate can only have digits and 6 characters long");
+            return;
+        }
+
+        if (!CryptUtils.isValidName(make)) {
+            CryptUtils.showAlertF("Invalid make", "Make can only contain letters");
+            return;
+        }
+
+        if (!CryptUtils.isValidName(model)) {
+            CryptUtils.showAlertF("Invalid model", "Model can only contain letters");
+            return;
+        }
+
+        if (!CryptUtils.isValidQID(customerID)) {
+            CryptUtils.showAlertF("Invalid ID", "Qatar ID must have exactly 11 digits");
+            return;
+        }
+
+        if (!CryptUtils.isValidQatariPhone(customerPhone)) {
+            CryptUtils.showAlertF("Invalid Phone", "Please enter a valid Qatari phone number.\n" +
+                    "Formats accepted: +974XXXXXXXX, 00974XXXXXXXX, XXXXXXXX, XXXX-XXXX");
+            return;
+        }
+
+
         Connection con = DBUtils.establishConnection();
         String query = "INSERT INTO `vehicle` (`licensePlate`, `make`, `model`, `customerID`, `customerPhone`) VALUES (?, ?, ?, ?, ?);";
 

@@ -85,5 +85,15 @@ public class CryptUtils {
         return Pattern.compile(regex).matcher(username).matches();
     }
 
+    public static boolean isValidQatariLicensePlate(String licensePlate) {
+        String regex = "^\\d{3,6}$";
+        return Pattern.compile(regex).matcher(licensePlate).matches();
+    }
+
+    public static boolean isValidQID(String QID) {
+        String regex = "^\\d{11}$";
+        return Pattern.compile(regex).matcher(QID).matches();
+    }
+
 
 }
