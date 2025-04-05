@@ -68,17 +68,35 @@ public class UserRegister {
     }
 
     private void register() {
-        String userName = usernameField.getText();
-        String name = nameField.getText();
-        String email = emailField.getText();
-        String phone = phoneField.getText();
+        String userName = usernameField.getText().trim();
+        String name = nameField.getText().trim();
+        String email = emailField.getText().trim();
+        String phone = phoneField.getText().trim();
         String role = roleComboBox.getValue();
 
-        Connection con = DBUtils.establishConnection();
-        String query = "INSERT INTO `users` (`username`, `name`, `email`, `phone`, `role`) VALUES (?, ?, ?, ?, ?);";
+        if (!CryptUtils.isValidName(phone)) {
+            CryptUtils.showAlertF("Invalid Name", "Name should only contain letters");
+            return;
+        }
+
+        if (!CryptUtils.isValidEmail(email)) {
+            CryptUtils.showAlertF("Invalid Email", "Please enter a valid email address.");
+            return;
+        }
+
+        if (!CryptUtils.isValidQatariPhone(phone)) {
+            CryptUtils.showAlertF("Invalid Phone", "Please enter a valid Qatari phone number.\n" +
+                    "Formats accepted: +974XXXXXXXX, 00974XXXXXXXX, XXXXXXXX, XXXX-XXXX");
+            return;
+        }
+
+        Connection con = null;
+        PreparedStatement statement = null;
 
         try {
-            PreparedStatement statement = con.prepareStatement(query);
+            con = DBUtils.establishConnection();
+            String query = "INSERT INTO `users` (`username`, `name`, `email`, `phone`, `role`) VALUES (?, ?, ?, ?, ?);";
+            statement = con.prepareStatement(query);
             statement.setString(1, userName);
             statement.setString(2, name);
             statement.setString(3, email);
@@ -88,16 +106,18 @@ public class UserRegister {
 
             DBUtils.logQuery(username, "New user registered", query);
 
-            if (rs==1) {
+            if (rs == 1) {
+                CryptUtils.showAlertS("Success", "User registered successfully!");
                 SuperInterface superInterface = new SuperInterface(stage, username);
                 superInterface.initializeComponents();
             } else {
                 CryptUtils.showAlertF("Registration Failed", "Username Unavailable.");
             }
-            DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to register.");
+        } finally {
+            DBUtils.closeConnection(con, statement);
         }
     }
 

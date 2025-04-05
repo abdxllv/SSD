@@ -62,4 +62,23 @@ public class CryptUtils {
         alert.showAndWait();
     }
 
+
+    public static boolean isValidName(String name) {
+        String regex = "^[a-zA-Z]+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(name);
+        return matcher.matches();
+    }
+
+    public static boolean isValidQatariPhone(String phone) {
+        String regex = "^(\\+974|00974)?[0-9]{8}$|^[0-9]{4}-?[0-9]{4}$";
+        return Pattern.compile(regex).matcher(phone).matches();
+    }
+
+    public static boolean isValidEmail(String email) {
+        String regex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,63}$";
+        return Pattern.compile(regex).matcher(email).matches();
+    }
+
+
 }
