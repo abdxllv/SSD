@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -64,24 +63,24 @@ public class UserChangePassword {
         String confirmNewPassword = confirmNewPasswordField.getText().trim();
 
         if (!newPassword.equals(confirmNewPassword)){
-            HashUtils.showAlertF("Error", "Passwords do not match.");
+            CryptUtils.showAlertF("Error", "Passwords do not match.");
             return;
         }
 
         if (newPassword.isEmpty()){
-            HashUtils.showAlertF("Error", "Password cannot be empty. Please enter a valid password");
+            CryptUtils.showAlertF("Error", "Password cannot be empty. Please enter a valid password");
             return;
         }
 
-        if(!(HashUtils.isValidPassword(newPassword))){
-            HashUtils.showAlertF("Error", "Password should be atleast 6 characters, with atleast one lowercase, one uppercase and one special character!");
+        if(!(CryptUtils.isValidPassword(newPassword))){
+            CryptUtils.showAlertF("Error", "Password should be atleast 6 characters, with atleast one lowercase, one uppercase and one special character!");
             return;
         }
 
         String hashedPassword = "";
-        byte[] salt = HashUtils.createSalt();
+        byte[] salt = CryptUtils.createSalt();
         try{
-            hashedPassword = HashUtils.generateHash(newPassword,salt);
+            hashedPassword = CryptUtils.generateHash(newPassword,salt);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -97,17 +96,17 @@ public class UserChangePassword {
             int result = statement.executeUpdate();
             DBUtils.logQuery(username, "Password Changed", query);
             if (result == 1) {
-                HashUtils.showAlertS("Success", "Password successfully changed");
+                CryptUtils.showAlertS("Success", "Password successfully changed");
 
                 UserLogin userLogin = new UserLogin(stage);
                 userLogin.initializeComponents();
 
             } else {
-                HashUtils.showAlertF("Failure", "Failed to update password");
+                CryptUtils.showAlertF("Failure", "Failed to update password");
             }
             DBUtils.closeConnection(con, statement);
         }catch(Exception e){
-            HashUtils.showAlertF("Database Error", "Failed to connect to the database.");
+            CryptUtils.showAlertF("Database Error", "Failed to connect to the database.");
         }
     }
 

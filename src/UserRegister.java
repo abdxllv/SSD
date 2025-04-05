@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
@@ -93,12 +92,12 @@ public class UserRegister {
                 SuperInterface superInterface = new SuperInterface(stage, username);
                 superInterface.initializeComponents();
             } else {
-                HashUtils.showAlertF("Registration Failed", "Username Unavailable.");
+                CryptUtils.showAlertF("Registration Failed", "Username Unavailable.");
             }
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to register.");
+            CryptUtils.showAlertF("Database Error", "Failed to register.");
         }
     }
 

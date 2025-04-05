@@ -90,12 +90,12 @@ public class ClerkVehicleRegister {
                 ClerkInterface clerkInterface = new ClerkInterface(stage, username);
                 clerkInterface.initializeComponents();
             } else {
-                HashUtils.showAlertF("Registration Failed", "Username Unavailable.");
+                CryptUtils.showAlertF("Registration Failed", "Username Unavailable.");
             }
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to register.");
+            CryptUtils.showAlertF("Database Error", "Failed to register.");
         }
     }
 }

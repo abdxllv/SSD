@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -72,7 +71,7 @@ public class UserDeactivate {
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to retrieve user data.");
+            CryptUtils.showAlertF("Database Error", "Failed to retrieve user data.");
         }
 
         viewLayout.getChildren().add(backButton);
@@ -94,14 +93,14 @@ public class UserDeactivate {
             DBUtils.closeConnection(con, statement);
 
             if (rowsAffected > 0) {
-                HashUtils.showAlertS("Success", "User deactivated successfully.");
+                CryptUtils.showAlertS("Success", "User deactivated successfully.");
                 new UserDeactivate(stage,username).initializeComponents();
             } else {
-                HashUtils.showAlertF("Error", "Failed to deactivate user.");
+                CryptUtils.showAlertF("Error", "Failed to deactivate user.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to deactivate user.");
+            CryptUtils.showAlertF("Database Error", "Failed to deactivate user.");
         }
     }
 }

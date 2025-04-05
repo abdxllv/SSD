@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -65,14 +64,14 @@ public class UserLogin {
                 String storedHash = rs.getString("password");
 
                 if (salt == null || storedHash == null || storedHash.isEmpty()) {
-                    HashUtils.showAlertS("Account Setup Required", "Please set your password as it has not been configured in the database yet.");
+                    CryptUtils.showAlertS("Account Setup Required", "Please set your password as it has not been configured in the database yet.");
                     UserChangePassword userChangePassword = new UserChangePassword(stage, username);
                     userChangePassword.initializeComponents();
 
                     return;
                 }
 
-                String userHash = HashUtils.generateHash(password, salt);
+                String userHash = CryptUtils.generateHash(password, salt);
                 System.out.println("Hash stored in Database:\n" + storedHash);
                 System.out.println("Hash made from user input:\n" + userHash);
 
@@ -101,17 +100,17 @@ public class UserLogin {
                 } else {
                     System.err.println("Authentication Failed: Invalid username or password.");
                     DBUtils.logQuery(username, "Log in attempt failure", query);
-                    HashUtils.showAlertF("Authentication Failed", "Invalid username or password.");
+                    CryptUtils.showAlertF("Authentication Failed", "Invalid username or password.");
                 }
             } else {
                 System.err.println("Authentication Failed: Invalid username or password.");
                 DBUtils.logQuery(username, "Log in attempt failure", query);
-                HashUtils.showAlertF("Authentication Failed", "Invalid username or password.");
+                CryptUtils.showAlertF("Authentication Failed", "Invalid username or password.");
             }
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            HashUtils.showAlertF("Database Error", "Failed to connect to the database.");
+            CryptUtils.showAlertF("Database Error", "Failed to connect to the database.");
         }
     }
 

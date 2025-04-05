@@ -66,7 +66,7 @@ public class VehicleDetail {
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to retrieve vehicle details.");
+            CryptUtils.showAlertF("Database Error", "Failed to retrieve vehicle details.");
         }
 
         layout.getChildren().add(backButton);

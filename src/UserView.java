@@ -53,7 +53,7 @@ public class UserView {
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to retrieve user data.");
+            CryptUtils.showAlertF("Database Error", "Failed to retrieve user data.");
         }
 
         ScrollPane scrollPane = new ScrollPane();

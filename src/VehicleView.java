@@ -47,7 +47,7 @@ public class VehicleView {
                             MechInterface mechInterface = new MechInterface(stage, username);
                             mechInterface.initializeComponents();
                         } else {
-                            HashUtils.showAlertF("Error", "Role not recognized.");
+                            CryptUtils.showAlertF("Error", "Role not recognized.");
                             UserLogin login = new UserLogin(stage);
                             login.initializeComponents();
                         }
@@ -56,7 +56,7 @@ public class VehicleView {
                     DBUtils.closeConnection(con, statement);
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    HashUtils.showAlertF("Database Error", "Failed to retrieve user role.");
+                    CryptUtils.showAlertF("Database Error", "Failed to retrieve user role.");
                 }
             }
         });
@@ -98,7 +98,7 @@ public class VehicleView {
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
-            HashUtils.showAlertF("Database Error", "Failed to retrieve user data.");
+            CryptUtils.showAlertF("Database Error", "Failed to retrieve user data.");
         }
 
 

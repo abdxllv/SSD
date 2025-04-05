@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class HashUtils {
+public class CryptUtils {
     public static String generateHash(String data, byte[] salt) throws NoSuchAlgorithmException{
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         digest.reset();
