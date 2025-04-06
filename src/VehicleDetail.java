@@ -77,7 +77,6 @@ public class VehicleDetail {
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to retrieve vehicle details.");
         }
 

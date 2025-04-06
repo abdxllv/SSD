@@ -137,7 +137,6 @@ public class UserRegister {
                 CryptUtils.showAlertF("Registration Failed", "Username Unavailable.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to register.");
         } finally {
             DBUtils.closeConnection(con, statement);

@@ -117,7 +117,6 @@ public class MechRegisterSP {
                 } catch (NumberFormatException e) {
                     CryptUtils.showAlertF("Error", "Quantity must be a valid number.");
                 } catch (Exception e) {
-                    e.printStackTrace();
                     CryptUtils.showAlertF("Database Error", "Failed to register the spare part.");
                 }
             }

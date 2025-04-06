@@ -139,7 +139,6 @@ public class ClerkVehicleRegister {
             }
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to register.");
         }
     }

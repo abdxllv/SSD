@@ -90,11 +90,15 @@ public class ClerkReturnPayment {
                 invoiceLayout.getChildren().add(invoiceBox);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+
             CryptUtils.showAlertF("Database Error", "Failed to retrieve invoice data.");
         } finally {
             DBUtils.closeConnection(con, statement);
-            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try {
+                if (rs != null) rs.close();
+            } catch (SQLException e) {
+                System.out.print("Database Error");
+            }
         }
 
         layout.getChildren().addAll(scrollPane, backButton);
@@ -197,7 +201,6 @@ public class ClerkReturnPayment {
                 CryptUtils.showAlertF("Error", "Invoice not found.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to process the payment.");
         } finally {
             DBUtils.closeConnection(con, checkStatement);
@@ -209,7 +212,7 @@ public class ClerkReturnPayment {
                 if (deleteVehicleStatement != null) deleteVehicleStatement.close();
                 if (checkAllPaidStatement != null) checkAllPaidStatement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.print("Database Error");
             }
         }
     }

@@ -109,7 +109,6 @@ public class MechScheduleFinal {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to insert schedule data.");
         }
     }

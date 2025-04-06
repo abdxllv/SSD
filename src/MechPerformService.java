@@ -201,7 +201,6 @@ public class MechPerformService {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
                 CryptUtils.showAlertF("Database Error", "Failed to save service or invoice.");
             } finally {
                 DBUtils.closeConnection(con, statement);
@@ -261,7 +260,6 @@ public class MechPerformService {
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to save service or invoice.");
         }
     }
@@ -280,7 +278,7 @@ public class MechPerformService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.print("Database Error");
         }
         return parts;
     }
@@ -297,7 +295,7 @@ public class MechPerformService {
                 stock = rs.getInt("quantityInStock");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.print("Database Error");
         }
         return stock;
     }
@@ -316,7 +314,7 @@ public class MechPerformService {
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.print("Database Error");
         }
     }
 
@@ -334,7 +332,6 @@ public class MechPerformService {
 
             System.out.println("Entry deleted from schedule table.");
         } catch (SQLException e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to delete entry from schedule table.");
         }
     }
@@ -353,7 +350,6 @@ public class MechPerformService {
 
             System.out.println("Vehicle status updated to 'Ready for Pickup'.");
         } catch (SQLException e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to update vehicle status.");
         }
     }

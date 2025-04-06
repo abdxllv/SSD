@@ -27,7 +27,7 @@ public class DBUtils {
             }
             System.out.println("Connection is closed");
         }catch(SQLException e){
-            e.printStackTrace();
+            System.out.print("Database Error");
         }
     }
 
@@ -40,7 +40,7 @@ public class DBUtils {
             logStatement.setString(3, query);
             logStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.print("Database Error");
         }
     }
 
@@ -52,7 +52,7 @@ public class DBUtils {
             logStatement.setString(2, actionType);
             logStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.print("Database Error");
         }
     }
 }

@@ -95,7 +95,7 @@ public class UserChangePassword {
         try{
             hashedPassword = CryptUtils.generateHash(newPassword,salt);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            System.out.print("Algorithm Error");
         }
 
 

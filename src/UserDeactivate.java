@@ -88,7 +88,6 @@ public class UserDeactivate {
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to retrieve user data.");
         }
 
@@ -117,7 +116,6 @@ public class UserDeactivate {
                 CryptUtils.showAlertF("Error", "Failed to deactivate user.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to deactivate user.");
         }
     }

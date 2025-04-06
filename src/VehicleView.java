@@ -67,7 +67,6 @@ public class VehicleView {
 
                     DBUtils.closeConnection(con, statement);
                 } catch (SQLException e) {
-                    e.printStackTrace();
                     CryptUtils.showAlertF("Database Error", "Failed to retrieve user role.");
                 }
             }
@@ -115,7 +114,6 @@ public class VehicleView {
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to retrieve user data.");
         }
 

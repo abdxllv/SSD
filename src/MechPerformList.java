@@ -87,7 +87,6 @@ public class MechPerformList {
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to retrieve schedule data.");
         }
 

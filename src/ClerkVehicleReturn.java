@@ -86,7 +86,6 @@ public class ClerkVehicleReturn {
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to retrieve vehicle data.");
         }
 
@@ -173,7 +172,6 @@ public class ClerkVehicleReturn {
             DBUtils.closeConnection(con, statusStatement);
 
         } catch (Exception e) {
-            e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to return vehicle.");
         }
     }
