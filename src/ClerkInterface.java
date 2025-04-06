@@ -1,5 +1,3 @@
-package src;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,6 +17,12 @@ public class ClerkInterface {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox clerkLayout = new VBox(10);
         clerkLayout.setPadding(new Insets(10));
         Button registerButton = new Button("Register Vehicle");
@@ -31,6 +35,12 @@ public class ClerkInterface {
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 ClerkVehicleRegister clerkVehicleRegister = new ClerkVehicleRegister(stage, username);
                 clerkVehicleRegister.initializeComponents();
             }
@@ -38,6 +48,12 @@ public class ClerkInterface {
         viewButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 VehicleView viewvehicle = new VehicleView(stage, username);
                 DBUtils.logQuery(username, "View All Vehicles");
                 viewvehicle.initializeComponents();
@@ -46,6 +62,12 @@ public class ClerkInterface {
         returnButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 ClerkVehicleReturn returnVehicle = new ClerkVehicleReturn(stage, username);
                 DBUtils.logQuery(username, "Vehicle Return Menu");
                 returnVehicle.initializeComponents();
@@ -54,6 +76,12 @@ public class ClerkInterface {
         changePassButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 UserChangePassword changePassword = new UserChangePassword(stage, username);
                 changePassword.initializeComponents();
             }
@@ -63,6 +91,7 @@ public class ClerkInterface {
             public void handle(ActionEvent event) {
                 UserLogin logout = new UserLogin(stage);
                 DBUtils.logQuery(username, "Log Out");
+                SessionManager.logout();
                 logout.initializeComponents();
             }
         });
