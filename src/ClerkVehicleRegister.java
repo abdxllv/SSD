@@ -101,10 +101,6 @@ public class ClerkVehicleRegister {
             return;
         }
 
-        if (!CryptUtils.isValidName(model)) {
-            CryptUtils.showAlertF("Invalid model", "Model can only contain letters");
-            return;
-        }
 
         if (!CryptUtils.isValidQID(customerID)) {
             CryptUtils.showAlertF("Invalid ID", "Qatar ID must have exactly 11 digits");
