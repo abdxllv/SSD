@@ -1,7 +1,5 @@
 package src;
 
-import java.time.LocalDateTime;
-
 public class SessionManager {
     private static Session currentSession;
 
