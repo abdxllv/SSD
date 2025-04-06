@@ -23,6 +23,12 @@ public class VehicleView {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox viewLayout = new VBox(10);
         viewLayout.setPadding(new Insets(10));
         Button backButton = new Button("Back");
@@ -30,6 +36,12 @@ public class VehicleView {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 try {
                     Connection con = DBUtils.establishConnection();
                     String query = "SELECT role FROM users WHERE username = ?";
@@ -85,6 +97,12 @@ public class VehicleView {
                 detailsButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
+                        if (!SessionManager.renewSession()) {
+                            UserLogin logIn = new UserLogin(stage);
+                            CryptUtils.showAlertF("Session Error", "Session has expired.");
+                            logIn.initializeComponents();
+                            return;
+                        }
                         VehicleDetail detail = new VehicleDetail(stage, licensePlate, username);
                         detail.initializeComponents();
                     }
