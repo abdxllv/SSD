@@ -24,6 +24,12 @@ public class VehicleDetail {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(10));
 
@@ -31,6 +37,12 @@ public class VehicleDetail {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 VehicleView vehicleView = new VehicleView(stage, username);
                 vehicleView.initializeComponents();
             }
