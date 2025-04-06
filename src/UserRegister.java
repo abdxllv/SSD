@@ -28,6 +28,12 @@ public class UserRegister {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox registerLayout = new VBox(10);
         registerLayout.setPadding(new Insets(10));
         Button backButton = new Button("Back");
@@ -40,6 +46,12 @@ public class UserRegister {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 SuperInterface superInterface = new SuperInterface(stage, username);
                 superInterface.initializeComponents();
             }
@@ -47,6 +59,12 @@ public class UserRegister {
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 register();
             }
         });
@@ -79,7 +97,7 @@ public class UserRegister {
             return;
         }
 
-        if (!CryptUtils.isValidName(phone)) {
+        if (!CryptUtils.isValidName(name)) {
             CryptUtils.showAlertF("Invalid Name", "Name should only contain letters");
             return;
         }
