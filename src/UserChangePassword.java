@@ -26,6 +26,12 @@ public class UserChangePassword {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox changePasswordLayout = new VBox(10);
         changePasswordLayout.setPadding(new Insets(10));
         Button changePasswordButton = new Button("Change Password");
@@ -34,6 +40,12 @@ public class UserChangePassword {
         changePasswordButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event){
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 changePassword();
             }
         });
@@ -41,6 +53,7 @@ public class UserChangePassword {
         logOutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event){
+                SessionManager.logout();
                 UserLogin logIn = new UserLogin(stage);
                 logIn.initializeComponents();
             }
@@ -94,8 +107,9 @@ public class UserChangePassword {
             statement.setBytes(2, salt);
             statement.setString(3, username);
             int result = statement.executeUpdate();
-            DBUtils.logQuery(username, "Password Changed", query);
             if (result == 1) {
+                DBUtils.logQuery(username, "Password Changed", query);
+
                 CryptUtils.showAlertS("Success", "Password successfully changed");
 
                 UserLogin userLogin = new UserLogin(stage);
