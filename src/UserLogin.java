@@ -1,6 +1,9 @@
 package src;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -13,6 +16,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class UserLogin {
+    private static final Map<String, Integer> attemptCounts = new HashMap<>();
+    private static final Map<String, Long> lockoutTimes = new HashMap<>();
+    private static final int MAX_ATTEMPTS = 5;
+    private static final long LOCKOUT_MS = 3 * 60 * 1000;
+
     private Scene loginScene;
     private TextField usernameField = new TextField();
     private PasswordField passwordField = new PasswordField();
@@ -50,6 +58,13 @@ public class UserLogin {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        Long lockoutTime = lockoutTimes.get(username);
+        if (lockoutTime != null && System.currentTimeMillis() < lockoutTime) {
+            long remainingSeconds = (lockoutTime - System.currentTimeMillis()) / 1000;
+            CryptUtils.showAlertF("Locked Out",
+                    "Too many attempts. Try again in " + remainingSeconds + " seconds.");
+            return;
+        }
 
         Connection con = DBUtils.establishConnection();
         String query = "SELECT salt,role, password FROM users WHERE username=?;";
@@ -76,41 +91,65 @@ public class UserLogin {
                 System.out.println("Hash made from user input:\n" + userHash);
 
                 if (userHash.equals(storedHash)) {
-                    if ("Supervisor".equals(rs.getString("role"))) {
-                        SuperInterface superInterface = new SuperInterface(stage, username);
-                        DBUtils.logQuery(username, "Supervisor Interface");
+                    attemptCounts.remove(username);
+                    lockoutTimes.remove(username);
+                    DBUtils.logQuery(username, "Successful login");
 
-                        superInterface.initializeComponents();
-                        return;
-                    }
-                    if("Clerk".equals(rs.getString("role"))){
-                        ClerkInterface clerkInterface = new ClerkInterface(stage, username);
-                        DBUtils.logQuery(username, "Clerk Interface");
+                    String role = rs.getString("role");
+                    SessionManager.createSession(username, role);
 
-                        clerkInterface.initializeComponents();
-                    }
-                    if("Mechanic".equals(rs.getString("role"))){
-                        MechInterface mechInterface = new MechInterface(stage, username);
-                        DBUtils.logQuery(username, "Mechanic Interface");
+                    switch(role) {
+                        case "Supervisor":
+                            SuperInterface superInterface = new SuperInterface(stage, username);
+                            DBUtils.logQuery(username, "Supervisor Interface");
 
-                        mechInterface.initializeComponents();
+                            superInterface.initializeComponents();
+                            break;
+                        case "Clerk":
+                            ClerkInterface clerkInterface = new ClerkInterface(stage, username);
+                            DBUtils.logQuery(username, "Clerk Interface");
+
+                            clerkInterface.initializeComponents();
+                            break;
+                        case "Mechanic":
+                            MechInterface mechInterface = new MechInterface(stage, username);
+                            DBUtils.logQuery(username, "Mechanic Interface");
+
+                            mechInterface.initializeComponents();
+                            break;
                     }
 
 
                 } else {
-                    System.err.println("Authentication Failed: Invalid username or password.");
-                    DBUtils.logQuery(username, "Log in attempt failure", query);
-                    CryptUtils.showAlertF("Authentication Failed", "Invalid username or password.");
+                    handleFailedAttempt(username, "Failed login attempt - wrong password");
                 }
             } else {
-                System.err.println("Authentication Failed: Invalid username or password.");
-                DBUtils.logQuery(username, "Log in attempt failure", query);
-                CryptUtils.showAlertF("Authentication Failed", "Invalid username or password.");
+                handleFailedAttempt(username, "Failed login attempt - unknown user");
             }
 
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
-            CryptUtils.showAlertF("Database Error", "Failed to connect to the database.");
+            handleFailedAttempt(username, "Failed login attempt - system error");
+        }
+    }
+
+
+    private void handleFailedAttempt(String username, String logMessage) {
+        // log to database
+        DBUtils.logQuery(username, logMessage);
+
+        // ipdate attempt count
+        int attempts = attemptCounts.getOrDefault(username, 0) + 1;
+        attemptCounts.put(username, attempts);
+
+        if (attempts >= MAX_ATTEMPTS) {
+            long lockoutEnd = System.currentTimeMillis() + LOCKOUT_MS;
+            lockoutTimes.put(username, lockoutEnd);
+            CryptUtils.showAlertF("Locked Out",
+                    "Too many attempts. Try again in 3 minutes.");
+        } else {
+            CryptUtils.showAlertF("Login Failed",
+                    "Invalid credentials. " + (MAX_ATTEMPTS - attempts) + " attempts left.");
         }
     }
 
