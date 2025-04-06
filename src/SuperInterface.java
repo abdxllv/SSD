@@ -1,5 +1,3 @@
-package src;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,6 +17,12 @@ public class SuperInterface {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox superLayout = new VBox(10);
         superLayout.setPadding(new Insets(10));
         Button registerButton = new Button("Register User");
@@ -31,6 +35,12 @@ public class SuperInterface {
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 UserRegister userRegister = new UserRegister(stage, username);
                 userRegister.initializeComponents();
             }
@@ -38,6 +48,12 @@ public class SuperInterface {
         viewUsersButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 UserView viewuser = new UserView(stage, username);
                 viewuser.initializeComponents();
             }
@@ -45,6 +61,12 @@ public class SuperInterface {
         deactivateUserButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 UserDeactivate deactivate = new UserDeactivate(stage,username);
                 deactivate.initializeComponents();
             }
@@ -52,6 +74,12 @@ public class SuperInterface {
         changePassButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 UserChangePassword changePassword = new UserChangePassword(stage,username);
                 changePassword.initializeComponents();
             }
@@ -61,6 +89,7 @@ public class SuperInterface {
             public void handle(ActionEvent event) {
                 UserLogin logout = new UserLogin(stage);
                 DBUtils.logQuery(username, "Log Out");
+                SessionManager.logout();
                 logout.initializeComponents();
             }
         });
