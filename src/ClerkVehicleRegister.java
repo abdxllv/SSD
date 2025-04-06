@@ -29,6 +29,12 @@ public class ClerkVehicleRegister {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox registerLayout = new VBox(10);
         registerLayout.setPadding(new Insets(10));
         Button backButton = new Button("Back");
@@ -38,6 +44,12 @@ public class ClerkVehicleRegister {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 ClerkInterface clerkInterface = new ClerkInterface(stage, username);
                 clerkInterface.initializeComponents();
             }
@@ -45,6 +57,12 @@ public class ClerkVehicleRegister {
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 register();
             }
         });
@@ -98,7 +116,6 @@ public class ClerkVehicleRegister {
                     "Formats accepted: +974XXXXXXXX, 00974XXXXXXXX, XXXXXXXX, XXXX-XXXX");
             return;
         }
-
 
         Connection con = DBUtils.establishConnection();
         String query = "INSERT INTO `vehicle` (`licensePlate`, `make`, `model`, `customerID`, `customerPhone`) VALUES (?, ?, ?, ?, ?);";

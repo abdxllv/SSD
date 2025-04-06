@@ -200,7 +200,6 @@ public class ClerkReturnPayment {
             e.printStackTrace();
             CryptUtils.showAlertF("Database Error", "Failed to process the payment.");
         } finally {
-            // Close all resources using DBUtils
             DBUtils.closeConnection(con, checkStatement);
             try {
                 if (rs != null) rs.close();
