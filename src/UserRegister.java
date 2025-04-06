@@ -61,7 +61,7 @@ public class UserRegister {
                 new Label("or"), backButton
         );
 
-        RegisterScene = new Scene(registerLayout, 300, 415);
+        RegisterScene = new Scene(registerLayout, 300, 420);
         stage.setTitle("User Registration");
         stage.setScene(RegisterScene);
         stage.show();

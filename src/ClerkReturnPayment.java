@@ -21,11 +21,23 @@ public class ClerkReturnPayment {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(10));
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> {
+            if (!SessionManager.renewSession()) {
+                UserLogin logIn = new UserLogin(stage);
+                CryptUtils.showAlertF("Session Error", "Session has expired.");
+                logIn.initializeComponents();
+                return;
+            }
             ClerkInterface clerkInterface = new ClerkInterface(stage, username);
             clerkInterface.initializeComponents();
         });
@@ -61,6 +73,12 @@ public class ClerkReturnPayment {
 
                 Button processPaymentButton = new Button("Process Payment");
                 processPaymentButton.setOnAction(e -> {
+                    if (!SessionManager.renewSession()) {
+                        UserLogin logIn = new UserLogin(stage);
+                        CryptUtils.showAlertF("Session Error", "Session has expired.");
+                        logIn.initializeComponents();
+                        return;
+                    }
                     if (paymentMethodComboBox.getValue() == null) {
                         CryptUtils.showAlertF("Error", "Please select a payment method.");
                     } else {
@@ -196,4 +214,4 @@ public class ClerkReturnPayment {
             }
         }
     }
-}
+}}

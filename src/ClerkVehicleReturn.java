@@ -23,6 +23,12 @@ public class ClerkVehicleReturn {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox viewLayout = new VBox(10);
         viewLayout.setPadding(new Insets(10));
         Button backButton = new Button("Back");
@@ -30,6 +36,12 @@ public class ClerkVehicleReturn {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 ClerkInterface clerkInterface = new ClerkInterface(stage, username);
                 clerkInterface.initializeComponents();
             }
@@ -58,6 +70,12 @@ public class ClerkVehicleReturn {
                 returnButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
+                        if (!SessionManager.renewSession()) {
+                            UserLogin logIn = new UserLogin(stage);
+                            CryptUtils.showAlertF("Session Error", "Session has expired.");
+                            logIn.initializeComponents();
+                            return;
+                        }
                         returnVehicle(licensePlate);
                     }
                 });
