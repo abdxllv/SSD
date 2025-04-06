@@ -1,5 +1,3 @@
-package src;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,6 +17,11 @@ public class MechRegisterSP {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(10));
@@ -36,6 +39,12 @@ public class MechRegisterSP {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 MechInterface mechInterface = new MechInterface(stage, username);
                 mechInterface.initializeComponents();
             }
@@ -46,6 +55,12 @@ public class MechRegisterSP {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 String partName = partNameField.getText();
                 String quantityText = quantityField.getText();
 
@@ -63,9 +78,9 @@ public class MechRegisterSP {
                     }
 
                     Connection con = DBUtils.establishConnection();
-                    String checkQuery = "SELECT * FROM spare_parts_inventory WHERE name = ?";
+                    String checkQuery = "SELECT * FROM spare_parts_inventory WHERE LOWER(name) = LOWER(?)";
                     PreparedStatement checkStatement = con.prepareStatement(checkQuery);
-                    checkStatement.setString(1, partName);
+                    checkStatement.setString(1, partName.trim());
                     ResultSet rs = checkStatement.executeQuery();
 
                     if (rs.next()) {

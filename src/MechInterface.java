@@ -1,5 +1,3 @@
-package src;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,6 +17,12 @@ public class MechInterface {
     }
 
     public void initializeComponents() {
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
+            logIn.initializeComponents();
+        }
+
         VBox mechLayout = new VBox(10);
         mechLayout.setPadding(new Insets(10));
         Button registerButton = new Button("Register Spare Part");
@@ -31,6 +35,12 @@ public class MechInterface {
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 MechRegisterSP registerSP = new MechRegisterSP(stage, username);
                 DBUtils.logQuery(username, "Register Spare Part Menu");
                 registerSP.initializeComponents();
@@ -40,6 +50,12 @@ public class MechInterface {
         scheduleButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 MechScheduleInt scheduleInt = new MechScheduleInt(stage, username);
                 DBUtils.logQuery(username, "Mechanic Scedhuling Interface");
                 scheduleInt.initializeComponents();
@@ -48,6 +64,12 @@ public class MechInterface {
         viewButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 VehicleView viewvehicle = new VehicleView(stage, username);
                 DBUtils.logQuery(username, "View All Vehicles");
                 viewvehicle.initializeComponents();
@@ -56,6 +78,12 @@ public class MechInterface {
         performButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 MechPerformList list = new MechPerformList(stage, username);
                 list.initializeComponents();
             }
@@ -63,6 +91,12 @@ public class MechInterface {
         changePassButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
+                    logIn.initializeComponents();
+                    return;
+                }
                 UserChangePassword changePassword = new UserChangePassword(stage, username);
                 changePassword.initializeComponents();
             }
@@ -72,6 +106,7 @@ public class MechInterface {
             public void handle(ActionEvent event) {
                 UserLogin logout = new UserLogin(stage);
                 DBUtils.logQuery(username, "Log Out");
+                SessionManager.logout();
                 logout.initializeComponents();
             }
         });
