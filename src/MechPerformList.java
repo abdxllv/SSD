@@ -9,11 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import src.src.CryptUtils;
-import src.src.DBUtils;
-import src.src.MechInterface;
-import src.src.SessionManager;
-import src.src.UserLogin;
+
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,9 +27,9 @@ public class MechPerformList {
     }
 
     public void initializeComponents() {
-        if (!src.src.SessionManager.isValidSession()) {
-            src.src.UserLogin logIn = new src.src.UserLogin(stage);
-            src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
             logIn.initializeComponents();
         }
 
@@ -43,23 +40,23 @@ public class MechPerformList {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (!src.src.SessionManager.renewSession()) {
-                    src.src.UserLogin logIn = new src.src.UserLogin(stage);
-                    src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
                     logIn.initializeComponents();
                     return;
                 }
-                src.src.MechInterface mechInterface = new MechInterface(stage, username);
+                MechInterface mechInterface = new MechInterface(stage, username);
                 mechInterface.initializeComponents();
             }
         });
 
         try {
-            Connection con = src.src.DBUtils.establishConnection();
+            Connection con = DBUtils.establishConnection();
             String query = "SELECT id, licensePlate, scheduledDate FROM schedule";
             PreparedStatement statement = con.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
-            src.src.DBUtils.logQuery("System", "Showing the vehicles that maintenance/service can be performed on", query);
+            DBUtils.logQuery("System", "Showing the vehicles that maintenance/service can be performed on", query);
 
 
             while (rs.next()) {
@@ -74,8 +71,8 @@ public class MechPerformList {
                     @Override
                     public void handle(ActionEvent event) {
                         if (!SessionManager.renewSession()) {
-                            src.src.UserLogin logIn = new UserLogin(stage);
-                            src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+                            UserLogin logIn = new UserLogin(stage);
+                            CryptUtils.showAlertF("Session Error", "Session has expired.");
                             logIn.initializeComponents();
                             return;
                         }

@@ -8,11 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
-import src.src.CryptUtils;
-import src.src.DBUtils;
-import src.src.MechInterface;
-import src.src.SessionManager;
-import src.src.UserLogin;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,9 +30,9 @@ public class MechPerformService {
     }
 
     public void initializeComponents() {
-        if (!src.src.SessionManager.isValidSession()) {
-            src.src.UserLogin logIn = new src.src.UserLogin(stage);
-            src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+        if (!SessionManager.isValidSession()) {
+            UserLogin logIn = new UserLogin(stage);
+            CryptUtils.showAlertF("Session Error", "Session has expired.");
             logIn.initializeComponents();
         }
 
@@ -51,13 +46,13 @@ public class MechPerformService {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (!src.src.SessionManager.renewSession()) {
-                    src.src.UserLogin logIn = new src.src.UserLogin(stage);
-                    src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
                     logIn.initializeComponents();
                     return;
                 }
-                src.src.MechInterface mechInterface = new src.src.MechInterface(stage, username);
+                MechInterface mechInterface = new MechInterface(stage, username);
                 mechInterface.initializeComponents();
             }
         });
@@ -67,9 +62,9 @@ public class MechPerformService {
         nextButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (!src.src.SessionManager.renewSession()) {
-                    src.src.UserLogin logIn = new src.src.UserLogin(stage);
-                    src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+                if (!SessionManager.renewSession()) {
+                    UserLogin logIn = new UserLogin(stage);
+                    CryptUtils.showAlertF("Session Error", "Session has expired.");
                     logIn.initializeComponents();
                     return;
                 }
@@ -78,10 +73,10 @@ public class MechPerformService {
                     if (count > 0) {
                         createForms(count);
                     } else {
-                        src.src.CryptUtils.showAlertF("Invalid Input", "Please enter a number greater than 0.");
+                        CryptUtils.showAlertF("Invalid Input", "Please enter a number greater than 0.");
                     }
                 } catch (NumberFormatException e) {
-                    src.src.CryptUtils.showAlertF("Invalid Input", "Please enter a valid integer.");
+                    CryptUtils.showAlertF("Invalid Input", "Please enter a valid integer.");
                 }
             }
         });
@@ -129,16 +124,16 @@ public class MechPerformService {
 
         Button submitButton = new Button("Submit All");
         submitButton.setOnAction(event -> {
-            if (!src.src.SessionManager.renewSession()) {
-                src.src.UserLogin logIn = new src.src.UserLogin(stage);
-                src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+            if (!SessionManager.renewSession()) {
+                UserLogin logIn = new UserLogin(stage);
+                CryptUtils.showAlertF("Session Error", "Session has expired.");
                 logIn.initializeComponents();
                 return;
             }
             Connection con = null;
             PreparedStatement statement = null;
             try {
-                con = src.src.DBUtils.establishConnection();
+                con = DBUtils.establishConnection();
                 boolean validSubmission = true;
                 List<String> partsUsed = new ArrayList<>();
                 List<Integer> quantitiesUsed = new ArrayList<>();
@@ -150,11 +145,11 @@ public class MechPerformService {
                     String quantityText = quantityFields.get(i).getText();
 
                     if (desc.isEmpty() || amountText.isEmpty() || (selectedPart == null || selectedPart.isEmpty())) {
-                        src.src.CryptUtils.showAlertF("Validation Error", "Please enter valid values for service " + (i + 1));
+                        CryptUtils.showAlertF("Validation Error", "Please enter valid values for service " + (i + 1));
                         return;
                     }
                     if ((selectedPart.equals("None") && !quantityText.isEmpty())){
-                        src.src.CryptUtils.showAlertF("Validation Error", "If no parts are used, keep quantity used field empty, for service " + (i + 1));
+                        CryptUtils.showAlertF("Validation Error", "If no parts are used, keep quantity used field empty, for service " + (i + 1));
                         return;
                     }
 
@@ -166,7 +161,7 @@ public class MechPerformService {
                         if (!selectedPart.equals("None")) {
                             int availableStock = getPartStock(con, selectedPart);
                             if (availableStock < quantityUsed) {
-                                src.src.CryptUtils.showAlertF("Stock Error", "Not enough stock for " + selectedPart);
+                                CryptUtils.showAlertF("Stock Error", "Not enough stock for " + selectedPart);
                                 validSubmission = false;
                                 return;
                             }
@@ -183,7 +178,7 @@ public class MechPerformService {
                         }
 
                     } catch (NumberFormatException e) {
-                        src.src.CryptUtils.showAlertF("Amount/Quantity Error", "Please enter valid values for service " + (i + 1));
+                        CryptUtils.showAlertF("Amount/Quantity Error", "Please enter valid values for service " + (i + 1));
                         return;
                     }
                 }
@@ -199,25 +194,25 @@ public class MechPerformService {
 
                     updateVehicleStatus(con);
 
-                    src.src.CryptUtils.showAlertS("Success", "All services recorded successfully. Vehicle is ready for pickup.");
+                    CryptUtils.showAlertS("Success", "All services recorded successfully. Vehicle is ready for pickup.");
 
-                    src.src.MechInterface mechInterface = new MechInterface(stage, username);
+                    MechInterface mechInterface = new MechInterface(stage, username);
                     mechInterface.initializeComponents();
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                src.src.CryptUtils.showAlertF("Database Error", "Failed to save service or invoice.");
+                CryptUtils.showAlertF("Database Error", "Failed to save service or invoice.");
             } finally {
-                src.src.DBUtils.closeConnection(con, statement);
+                DBUtils.closeConnection(con, statement);
             }
         });
 
         Button backButton = new Button("Back");
         backButton.setOnAction(event -> {
             if (!SessionManager.renewSession()) {
-                src.src.UserLogin logIn = new UserLogin(stage);
-                src.src.CryptUtils.showAlertF("Session Error", "Session has expired.");
+                UserLogin logIn = new UserLogin(stage);
+                CryptUtils.showAlertF("Session Error", "Session has expired.");
                 logIn.initializeComponents();
                 return;
             }
@@ -251,7 +246,7 @@ public class MechPerformService {
             statement.setDouble(5, amount);
             statement.executeUpdate();
 
-            src.src.DBUtils.logQuery(username, "Inserting a service record for a vehicle", serviceQuery);
+            DBUtils.logQuery(username, "Inserting a service record for a vehicle", serviceQuery);
 
 
             // Invoice Query
@@ -262,12 +257,12 @@ public class MechPerformService {
             statement.setDouble(3, amount);
             statement.executeUpdate();
 
-            src.src.DBUtils.logQuery(username, "making an invoice for a vehicle service/maintenance", invoiceQuery);
+            DBUtils.logQuery(username, "making an invoice for a vehicle service/maintenance", invoiceQuery);
 
 
         } catch (SQLException e) {
             e.printStackTrace();
-            src.src.CryptUtils.showAlertF("Database Error", "Failed to save service or invoice.");
+            CryptUtils.showAlertF("Database Error", "Failed to save service or invoice.");
         }
     }
 
@@ -276,7 +271,7 @@ public class MechPerformService {
         Connection con = null;
         Statement stmt = null;
         try {
-            con = src.src.DBUtils.establishConnection();
+            con = DBUtils.establishConnection();
             stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT name FROM spare_parts_inventory");
 
@@ -316,7 +311,7 @@ public class MechPerformService {
             statement.setString(2, partName);
             statement.executeUpdate();
 
-            src.src.DBUtils.logQuery("System", "decrementing quantity of a spare part", updateQuery);
+            DBUtils.logQuery("System", "decrementing quantity of a spare part", updateQuery);
 
 
 
@@ -334,13 +329,13 @@ public class MechPerformService {
             statement.setString(1, licensePlate);
             statement.executeUpdate();
 
-            src.src.DBUtils.logQuery("System", "Deleting the vehicle entry from schedule", deleteQuery);
+            DBUtils.logQuery("System", "Deleting the vehicle entry from schedule", deleteQuery);
 
 
             System.out.println("Entry deleted from schedule table.");
         } catch (SQLException e) {
             e.printStackTrace();
-            src.src.CryptUtils.showAlertF("Database Error", "Failed to delete entry from schedule table.");
+            CryptUtils.showAlertF("Database Error", "Failed to delete entry from schedule table.");
         }
     }
 
