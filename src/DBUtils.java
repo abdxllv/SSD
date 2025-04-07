@@ -51,6 +51,7 @@ public class DBUtils {
             logStatement.setString(2, actionType);
             logStatement.setString(3, query);
             logStatement.executeUpdate();
+            closeConnection(con, logStatement);
         } catch (SQLException e) {
             System.out.print("Database Error");
         }
@@ -63,6 +64,7 @@ public class DBUtils {
             logStatement.setString(1, username);
             logStatement.setString(2, actionType);
             logStatement.executeUpdate();
+            closeConnection(con, logStatement);
         } catch (SQLException e) {
             System.out.print("Database Error");
         }
