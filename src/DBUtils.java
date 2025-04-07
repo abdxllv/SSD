@@ -1,22 +1,34 @@
 package src;
 
 import java.sql.*;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class DBUtils {
-    private static String url = "jdbc:mysql://localhost:3306/assignment";
-    private static String appUsername = "abdulla";
-    private static String appPassword = "DACSpass";
+    private static final Properties config = new Properties();
 
-    public static Connection establishConnection(){
-        Connection con = null;
-        try{
-            con = DriverManager.getConnection(url, appUsername, appPassword);
-            System.out.println("Connection Successful");
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
+    static {
+        try (InputStream input = DBUtils.class.getClassLoader()
+                .getResourceAsStream("config.properties")) {
+            config.load(input);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load config", e);
         }
-        return con;
     }
+
+    public static Connection establishConnection() {
+        try {
+            return DriverManager.getConnection(
+                    config.getProperty("db.url"),
+                    config.getProperty("db.user"),
+                    config.getProperty("db.password")
+            );
+        } catch (SQLException e) {
+            System.out.println("Connection Error: " + e.getMessage());
+            return null;
+        }
+    }
+
     public static void closeConnection(Connection con, Statement stmt){
         try{
             if (stmt != null) {  // Check if the statement is not null before closing
