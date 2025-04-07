@@ -80,7 +80,7 @@ public class MechRegisterSP {
                     }
 
                     Connection con = DBUtils.establishConnection();
-                    String checkQuery = "SELECT * FROM spare_parts_inventory WHERE LOWER(name) = LOWER(?)";
+                    String checkQuery = "SELECT name, quantityInStock FROM spare_parts_inventory WHERE LOWER(name) = LOWER(?)";
                     PreparedStatement checkStatement = con.prepareStatement(checkQuery);
                     checkStatement.setString(1, partName.trim());
                     ResultSet rs = checkStatement.executeQuery();
